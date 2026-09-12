@@ -181,7 +181,7 @@ var level,res,revroom,overdrive,x,y,z,tx,ty,tz,trange,busarray2,pitchx,pitchy,pi
 var freqx,freqy,freqz,ampx,ampy,ampz,tonex,toney,tonez,tune=~ffreq*(9/8),phasex,phasey,phasez,snt;
 var c1,c2,c3,sigx,sigy,sigz,azn,eln,cx,cy,cz,g1,g2,g3,g4,thresholdk,note;
 var n=0,polytope=2,busarray1,harmonic,fund,mix,a,b,cc,immersion,busarray,gate,threshold;
-var xp,yp,zp,kx,ky,kz,vx,vy,vz,formants,c12,c22,env;
+var xp,yp,zp,kx,ky,kz,vx,vy,vz,formants,c12,c22,env,paner;
 
 ///inputs
 level=2.pow(gain.lag2(~lagtime)/16256);
@@ -285,7 +285,7 @@ sigy=FreeVerb.ar((c2).fold2(overdrive*~comp),yp.lag2(0.1).fold2(1).abs,revroom);
 sigz=FreeVerb.ar((c3).fold2(overdrive*~comp),zp.lag2(0.1).fold2(1).abs,revroom);
 
 //vbap panner
-(
+/*(
 g1=((cos(eln)*cos(azn)*cos(~azimuth.[0])*cos(~azimuth.[0]))
 +
 (cos(eln)*sin(azn)* cos(~elevation.[0])*sin(~azimuth.[0]))
@@ -309,7 +309,7 @@ g4=((cos(eln)*cos(azn)*cos(~elevation.[3])*cos(~azimuth.[3]))
 (cos(eln)*sin(azn)*cos(~elevation.[3])*sin(~azimuth.[3]))
 +
 (sin(eln)*sin(~elevation.[3])));
-);
+);*/
 
 ///sig
 a=HPF.ar((LeakDC.ar((sigx)*((sigz).fold2(overdrive*~distortion)+(ampz)))),64);
@@ -343,9 +343,9 @@ cc=vz;*/
 //use z for mono out
 //busarray1=[0,2,4,6,8,10,12,14];
 //busarray2=[1,3,5,7,9,11,13,15];
-Out.ar(2,a.softclip(3));
-Out.ar(3,b.softclip(3));
-Out.ar(4,cc.softclip(3));
+//Out.ar(2,a.softclip(3));
+//Out.ar(3,b.softclip(3));
+//Out.ar(4,cc.softclip(3));
 
 //vbap out
 /*(
@@ -364,9 +364,11 @@ Out.ar(3,cc.softclip(3)*g4);
 )*/
 
 //pan stereo out, wavefield mixed, if recorded on stereo stereo ouput acoustics present, if mono out record, audio format stereo speakers
-Out.ar(0,Pan2.ar(a.softclip(3),(x.clip2(1))*immersion));
-Out.ar(0,Pan2.ar(b.softclip(3),(y.clip2(1))*immersion));
-Out.ar(0,Pan2.ar(cc.softclip(3),(z.clip2(1))));
+//field
+paner=Cartesian(x,y,z);
+Out.ar(0,Pan2.ar(a.softclip(3),(paner.theta.linlin(pi.neg,pi,1.neg,1).wrap(0,1))*immersion));
+Out.ar(0,Pan2.ar(b.softclip(3),(paner.theta.linlin(pi.neg,pi,1.neg,1).wrap(0,1.neg))*immersion));
+Out.ar(0,Pan2.ar(cc.softclip(3),(paner.phi.linlin(0.5pi.neg,0.5pi,1.neg,1))));
 
 //quad out
 //Out.ar(0,Pan4.ar(a.softclip(3),(x.wrap2(1))*immersion,(y.wrap2(1))*immersion));
