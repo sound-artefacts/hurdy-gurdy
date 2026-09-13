@@ -257,9 +257,9 @@ phasez=(z*2pi);
 
 /////////osc
 c1=BPF.ar((Osc.ar(~wt.bufnum,freqx,phase:phasex,mul:~complevel).abs*
-SinOsc.ar(freqx,phase:phasex)),freqx,res,ampx*x.sign*immersion);
+SinOsc.ar(freqx,phase:phasex)),freqx,res,ampx*x.sign*1);
 c2=BPF.ar((Osc.ar(~wt.bufnum,freqy,phase:phasey,mul:~complevel).abs*
-SinOsc.ar(freqy,phase:phasey)),freqy,res,ampy*y.sign*immersion);
+SinOsc.ar(freqy,phase:phasey)),freqy,res,ampy*y.sign*1);
 c3=BPF.ar((Osc.ar(~wt.bufnum,freqz,phase:phasez,mul:~complevel).abs*
 SinOsc.ar(freqz,phase:phasez)),freqz,res,ampz*z.sign);
 
@@ -410,7 +410,7 @@ n=n+1;
 ~dist=1;
 ~v=1;
 ~voice=0.1;
-~l1=1;
+~l1=0;
 ~l2=1;
 );
 
@@ -544,66 +544,67 @@ harm.postln;
 );
 (
 MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
-var hold;
-r=val.linlin(0,127,0.5pi.neg,0.5pi);
-~elr=r/2;
-r.postln;
-},6);
-);
-(
-MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
-var r;
-r=val.linlin(0,127,0.5pi.neg,0.5pi);
-~azr=r;
-r.postln;
-},7);
-);
-(
-MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
-var tone;
-tone=val.linlin(0,127,pi.neg,pi);
-tone.postln;
-~tone=tone;
-},8);
-);
-(
-MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 var room;
 room=val.linlin(0,127,(16256*12).neg,0).round(1);
 room.postln;
 ~room=room;
+},6);
+);
+(
+MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
+var mag;
+mag=val.linlin(0,127,0,~temperament/2).round(1);
+mag.postln;
+~mag=mag;
+},7);
+);
+(
+MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
+var r;
+r=val.linlin(0,127,0.5pi.neg,0.5pi);
+~azr=r;
+~elr=r/2;
+r.postln;
+},8);
+);
+(
+MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
+var tone;
+tone=val.linlin(0,127,pi.neg,pi);
+tone.postln;
+~tone=tone;
 },9);
 );
 (
 MIDIdef.cc(\midi_pot10,{ |val, num, chan, src|
-var mag;
-	mag=val.linlin(0,127,0,~temperament/2).round(1);
-mag.postln;
-~mag=mag;
+var sc;
+sc=val.linlin(0,127,0,5).round(1);
+sc.postln;
+~scaleselect=sc;g;
 },10);
 );
 (
 MIDIdef.cc(\midi_pot11,{ |val, num, chan, src|
-var sc;
-sc=val.linlin(0,127,0,5).round(1);
-sc.postln;
-~scaleselect=sc;
-},11);
-);
-(
-MIDIdef.cc(\midi_pot12,{ |val, num, chan, src|
-var sc;
-sc=val.linlin(0,127,0.0001,1);
-sc.postln;
-~voice=sc;
-},12);
-);
-(
-MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 var note;
 note=val.linlin(0,127,0.01pi,pi);
 note.postln;
 ~spinbind=note;
+},11);
+);
+(
+MIDIdef.cc(\midi_pot12,{ |val, num, chan, src|
+var l2;
+l2=val.linlin(0,127,0,1);
+l2.postln;
+~l2=l2;
+},12);
+);
+(
+MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
+var sc;
+sc=val.linlin(0,127,0.0001,1);
+sc.postln;
+~voice=sc;
 },13);
 );
 (
