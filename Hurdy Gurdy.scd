@@ -146,7 +146,6 @@ signal=Signal.sineFill(~signalSizec,~arrayc,~phc); wt = signal.asWavetable; ~wtc
 }.value
 );
 
-
 (//scales
 (~note=7;
 ~scale1=[0,5,7,12,17,19,24];
@@ -690,7 +689,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_pot23,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,7,7).round(7);
+note=val.linlin(0,127,12,12).round(12);
 note.postln;
 ~sn=note;
 },24);
@@ -698,7 +697,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_pot24,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,8,8).round(8);
+note=val.linlin(0,127,14,14).round(14);
 note.postln;
 ~sn=note;
 },25);
@@ -706,7 +705,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,9,9).round(9);
+note=val.linlin(0,127,15,15).round(15);
 note.postln;
 ~sn=note;
 },26);
@@ -714,7 +713,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,10,10).round(10);
+note=val.linlin(0,127,17,17).round(17);
 note.postln;
 ~sn=note;
 },27);
@@ -722,7 +721,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,12,12).round(12);
+note=val.linlin(0,127,19,19).round(19);
 note.postln;
 ~sn=note;
 },28);
@@ -730,7 +729,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,14,14).round(14);
+note=val.linlin(0,127,21,21).round(21);
 note.postln;
 ~sn=note;
 },29);
@@ -738,7 +737,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,15,15).round(15);
+note=val.linlin(0,127,22,22).round(22);
 note.postln;
 ~sn=note;
 },30);
@@ -746,7 +745,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,17,17).round(17);
+note=val.linlin(0,127,24,24).round(24);
 note.postln;
 ~sn=note;
 },31);
@@ -754,7 +753,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,19,19).round(19);
+note=val.linlin(0,127,26,26).round(26);
 note.postln;
 ~sn=note;
 },32);
@@ -762,7 +761,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,21,21).round(21);
+note=val.linlin(0,127,27,27).round(27);
 note.postln;
 ~sn=note;
 },33);
@@ -770,7 +769,7 @@ note.postln;
 (
 MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,22,22).round(22);
+note=val.linlin(0,127,22,29).round(29);
 note.postln;
 ~sn=note;
 },34);
