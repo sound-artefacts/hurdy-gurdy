@@ -167,7 +167,7 @@ nn=1.neg;
 ////seq
 ~fuselim=(16256*9).neg;
 ~comp=3;
-~distortion=0.1;
+~distortion=1;
 ~noise=0.0001;
 ~complevel=1024;
 ///////////////////feed
@@ -312,14 +312,14 @@ g4=((cos(eln)*cos(azn)*cos(~elevation.[3])*cos(~azimuth.[3]))
 );*/
 
 ///sig
-a=HPF.ar((LeakDC.ar((sigx)*((sigz).fold2(overdrive*~distortion)+(ampz)))),64);
-b=HPF.ar((LeakDC.ar((sigy)*((sigz).fold2(overdrive*~distortion)+(ampz)))),64);
-cc=HPF.ar((LeakDC.ar((sigz)*((sigz).fold2(overdrive*~distortion)+(ampz)))),64);
+a=HPF.ar((LeakDC.ar((sigx)*((sigz).fold2(overdrive*~distortion)+(0)))),64);
+b=HPF.ar((LeakDC.ar((sigy)*((sigz).fold2(overdrive*~distortion)+(0)))),64);
+//cc=HPF.ar((LeakDC.ar((sigz)*((sigz).fold2(overdrive*~distortion)+(ampz)))),64);
 
 threshold=(((343/0.15)/tune).reciprocal.ampdb/2.sqrt).dbamp;
 a=Compander.ar(sigx,sigx,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
 b=Compander.ar(sigy,sigy,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
-cc=Compander.ar(sigz,sigz,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
+//cc=Compander.ar(sigz,sigz,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
 
 //formants
 //aeiou	//freq,bandwidth,amp
@@ -368,7 +368,7 @@ Out.ar(3,cc.softclip(3)*g4);
 paner=Cartesian(x,y,z);
 Out.ar(0,Pan2.ar(a.softclip(3),(paner.theta.linlin(pi.neg,pi,1.neg,1).wrap(0,1))));
 Out.ar(0,Pan2.ar(b.softclip(3),(paner.theta.linlin(pi.neg,pi,1.neg,1).wrap(0,1.neg))));
-Out.ar(0,Pan2.ar(cc.softclip(3),(paner.phi.linlin(0.5pi.neg,0.5pi,1.neg,1))));
+//Out.ar(0,Pan2.ar(cc.softclip(3),(paner.phi.linlin(0.5pi.neg,0.5pi,1.neg,1))));
 
 //quad out
 //Out.ar(0,Pan4.ar(a.softclip(3),(x.wrap2(1))*immersion,(y.wrap2(1))*immersion));
