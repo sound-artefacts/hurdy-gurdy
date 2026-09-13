@@ -623,23 +623,23 @@ dist.postln;
 },15);
 );
 (
+MIDIdef.cc(\midi_pot155,{ |val, num, chan, src|
+var l2;
+l2=val.linlin(0,127,0,1);
+l2.postln;
+~l2=l2;
+},16);
+);
+(
 MIDIdef.cc(\midi_pot16,{ |val, num, chan, src|
 var note;
 note=val.linlin(0,127,0,0).round(0);
 note.postln;
 ~sn=note;
-},16);
-);
-(
-MIDIdef.cc(\midi_pot17,{ |val, num, chan, src|
-var note;
-note=val.linlin(0,127,1,1).round(1);
-note.postln;
-~sn=note;
 },17);
 );
 (
-MIDIdef.cc(\midi_pot18,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot17,{ |val, num, chan, src|
 var note;
 note=val.linlin(0,127,2,2).round(2);
 note.postln;
@@ -647,7 +647,7 @@ note.postln;
 },18);
 );
 (
-MIDIdef.cc(\midi_pot19,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot18,{ |val, num, chan, src|
 var note;
 note=val.linlin(0,127,3,3).round(3);
 note.postln;
@@ -655,28 +655,36 @@ note.postln;
 },19);
 );
 (
-MIDIdef.cc(\midi_pot20,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot19,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,4,4).round(4);
+note=val.linlin(0,127,5,5).round(5);
 note.postln;
 ~sn=note;
 },20);
 );
 (
-MIDIdef.cc(\midi_pot21,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot20,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,5,5).round(5);
+note=val.linlin(0,127,7,7).round(7);
 note.postln;
 ~sn=note;
 },21);
 );
 (
-MIDIdef.cc(\midi_pot22,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot21,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,6,6).round(6);
+note=val.linlin(0,127,9,9).round(9);
 note.postln;
 ~sn=note;
 },22);
+);
+(
+MIDIdef.cc(\midi_pot22,{ |val, num, chan, src|
+var note;
+note=val.linlin(0,127,10,10).round(10);
+note.postln;
+~sn=note;
+},23);
 );
 (
 MIDIdef.cc(\midi_pot23,{ |val, num, chan, src|
@@ -684,7 +692,7 @@ var note;
 note=val.linlin(0,127,7,7).round(7);
 note.postln;
 ~sn=note;
-},23);
+},24);
 );
 (
 MIDIdef.cc(\midi_pot24,{ |val, num, chan, src|
@@ -692,7 +700,7 @@ var note;
 note=val.linlin(0,127,8,8).round(8);
 note.postln;
 ~sn=note;
-},24);
+},25);
 );
 (
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
@@ -700,7 +708,7 @@ var note;
 note=val.linlin(0,127,9,9).round(9);
 note.postln;
 ~sn=note;
-},25);
+},26);
 );
 (
 MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
@@ -708,18 +716,10 @@ var note;
 note=val.linlin(0,127,10,10).round(10);
 note.postln;
 ~sn=note;
-},26);
-);
-(
-MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
-var note;
-note=val.linlin(0,127,11,11).round(11);
-note.postln;
-~sn=note;
 },27);
 );
 (
-MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 var note;
 note=val.linlin(0,127,12,12).round(12);
 note.postln;
@@ -727,44 +727,52 @@ note.postln;
 },28);
 );
 (
-MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,13,13).round(13);
+note=val.linlin(0,127,14,14).round(14);
 note.postln;
 ~sn=note;
 },29);
 );
 (
-MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,14,14).round(14);
+note=val.linlin(0,127,15,15).round(15);
 note.postln;
 ~sn=note;
 },30);
 );
 (
-MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,15,15).round(15);
+note=val.linlin(0,127,17,17).round(17);
 note.postln;
 ~sn=note;
 },31);
 );
 (
-MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,12,12).round(12);
+note=val.linlin(0,127,19,19).round(19);
 note.postln;
 ~sn=note;
 },32);
 );
 (
-MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
 var note;
-note=val.linlin(0,127,16,16).round(16);
+note=val.linlin(0,127,21,21).round(21);
 note.postln;
 ~sn=note;
 },33);
+);
+(
+MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
+var note;
+note=val.linlin(0,127,22,22).round(22);
+note.postln;
+~sn=note;
+},34);
 );
 );
 ////////////////////////gui
