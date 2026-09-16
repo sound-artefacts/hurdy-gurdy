@@ -175,7 +175,7 @@ nn=1.neg;
 SynthDef.new(\synth,{
 
 arg gain=0,fundamental=0,resonanse=0,harm=1,room=0,drive=0,mag=0,dist=1,voice=0.1,
-tone=1,scselect=0,key=0,v=1,l1=1,l2=1,az=#[0,0,0,0],el=#[0,0,0,0];
+tone=1,scselect=0,key=0,v=1,l1=1,l2=1,az=#[0,0,0,0],el=#[0,0,0,0],decay=8;
 var level,res,revroom,overdrive,x,y,z,tx,ty,tz,trange,busarray2,pitchx,pitchy,pitch;
 var freqx,freqy,freqz,ampx,ampy,ampz,tonex,toney,tonez,tune=~ffreq*(9/8),phasex,phasey,phasez,snt;
 var c1,c2,c3,sigx,sigy,sigz,azn,eln,cx,cy,cz,g1,g2,g3,g4,thresholdk,note;
@@ -195,9 +195,6 @@ trange=mag.lag2(~lagtime);
 level=level;
 
 note=2.pow(key.lag2(~lagtime)/12);
-
-env=EnvGen.ar(Env.perc(0.01,8,1),gate:Trig1.kr(Changed.kr(key), 0.01));
-level=level;
 
 
 ///pitch
@@ -229,6 +226,8 @@ z =(sin(eln));
 
 //////perspective
 immersion = (level/dist) / ((level/dist) + z + ((level/dist)/2));
+
+env=EnvGen.ar(Env.perc(0.01*decay,decay,immersion),gate:Trig1.kr(Changed.kr(key), 0.01));
 ////temperament
 tx = (trange*kx);
 ty = (trange*ky);
@@ -388,8 +387,8 @@ n=n+1;
 (
 SynthDef.new(\synthr,{
 
-arg gain=0,fundamental=0,resonanse=0,harm=1,room=0,drive=0,mag=0,dist=1,voice=0.1,
-tone=1,scselect=0,key=0,v=1,l1=1,l2=1,az=#[0,0,0,0],el=#[0,0,0,0];
+arg gain=0,fundamental=0,resonanse=0,harm=1,room=0,drive=0,mag=0,dist=0.9,voice=0.1,
+tone=1,scselect=0,key=0,v=1,l1=1,l2=1,az=#[0,0,0,0],el=#[0,0,0,0],decay=8;
 var level,res,revroom,overdrive,x,y,z,tx,ty,tz,trange,busarray2,pitchx,pitchy,pitch;
 var freqx,freqy,freqz,ampx,ampy,ampz,tonex,toney,tonez,tune=~ffreq*(9/8),phasex,phasey,phasez,snt;
 var c1,c2,c3,sigx,sigy,sigz,azn,eln,cx,cy,cz,g1,g2,g3,g4,thresholdk,note;
@@ -409,10 +408,6 @@ trange=mag.lag2(~lagtime);
 level=level;
 
 note=2.pow(key.lag2(~lagtime)/12);
-
-env=EnvGen.ar(Env.perc(0.01,8,1),gate:Trig1.kr(Changed.kr(key), 0.01));
-level=level;
-
 
 ///pitch
 fund=c*tune;
@@ -443,6 +438,8 @@ z =(sin(eln));
 
 //////perspective
 immersion = (level/dist) / ((level/dist) + z + ((level/dist)/2));
+
+env=EnvGen.ar(Env.perc(0.01*decay,decay,immersion),gate:Trig1.kr(Changed.kr(key), 0.01));
 ////temperament
 tx = (trange*kx);
 ty = (trange*ky);
@@ -601,7 +598,7 @@ n=n+1;
 ///data
 (
 ~time=1;
-~clock=TempoClock.default.tempo_(1);
+~clock=TempoClock.default.tempo_(1.5);
 ~attack=0.000001/~time;
 );
 (
@@ -624,6 +621,8 @@ n=n+1;
 ~l2=1;
 ~sn=0;
 ~sn2=0;
+~decay=8;
+~decayr=8;
 );
 
 //feed
@@ -683,6 +682,7 @@ Pmono( \synthr,
 \l1,Pfunc{~l1},
 \l2,Pfunc{~l2},
 \v,Pseq([0,1,2,3,4],inf),
+\decay,Pfunc{~decay},
 //\v,Pseq([0],inf)
 )));
 
@@ -706,6 +706,7 @@ Pmono( \synth,
 \l1,Pfunc{~l1},
 \l2,Pfunc{~l2},
 \v,Pseq([0,1,2,3,4],inf),
+\decay,Pfunc{~decayr},
 //\v,Pseq([0],inf)
 )))
 );
@@ -848,17 +849,17 @@ l1.postln;
 (
 MIDIdef.cc(\midi_pot15,{ |val, num, chan, src|
 var dist;
-dist=val.linlin(0,127,0.01,10);
+dist=val.linlin(0,127,1,16);
 dist.postln;
-~dist=dist;
+~decay=dist;
 },15);
 );
 (
 MIDIdef.cc(\midi_pot155,{ |val, num, chan, src|
 var l2;
-l2=val.linlin(0,127,0,1);
+l2=val.linlin(0,127,1,16);
 l2.postln;
-~l2=l2;
+~decayr=l2;
 },16);
 );
 (
