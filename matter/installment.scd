@@ -197,7 +197,7 @@ level=level;
 note=2.pow(key.lag2(~lagtime)/12);
 
 env=EnvGen.ar(Env.perc(0.01,8,1),gate:Trig1.kr(Changed.kr(key), 0.01));
-level=level*(env+1);
+level=level;
 
 
 ///pitch
@@ -258,11 +258,11 @@ phasez=(z*2pi);
 
 /////////osc
 c1=BPF.ar((Osc.ar(~wt.bufnum,freqx,phase:phasex,mul:~complevel).abs*
-SinOsc.ar(freqx,phase:phasex)),freqx,res,ampx*x.sign*1);
+SinOsc.ar(freqx,phase:phasex)),freqx,res,ampx*x.sign*1)*(env+0);
 c2=BPF.ar((Osc.ar(~wt.bufnum,freqy,phase:phasey,mul:~complevel).abs*
-SinOsc.ar(freqy,phase:phasey)),freqy,res,ampy*y.sign*1);
+SinOsc.ar(freqy,phase:phasey)),freqy,res,ampy*y.sign*1)*(env+0);
 c3=BPF.ar((Osc.ar(~wt.bufnum,freqz,phase:phasez,mul:~complevel).abs*
-SinOsc.ar(freqz,phase:phasez)),freqz,res,ampz*z.sign);
+SinOsc.ar(freqz,phase:phasez)),freqz,res,ampz*z.sign)*(env+0);
 
 c12=BPF.ar((Osc.ar(~wt.bufnum,(fund)*2,phase:phasex,mul:~complevel).abs*
 SinOsc.ar((fund)*2,phase:phasex)),(fund)*2,res,ampx*x.sign/2)*l1;
@@ -385,7 +385,219 @@ n=n+1;
 );
 
 4.wait;
+(
+SynthDef.new(\synthr,{
 
+arg gain=0,fundamental=0,resonanse=0,harm=1,room=0,drive=0,mag=0,dist=1,voice=0.1,
+tone=1,scselect=0,key=0,v=1,l1=1,l2=1,az=#[0,0,0,0],el=#[0,0,0,0];
+var level,res,revroom,overdrive,x,y,z,tx,ty,tz,trange,busarray2,pitchx,pitchy,pitch;
+var freqx,freqy,freqz,ampx,ampy,ampz,tonex,toney,tonez,tune=~ffreq*(9/8),phasex,phasey,phasez,snt;
+var c1,c2,c3,sigx,sigy,sigz,azn,eln,cx,cy,cz,g1,g2,g3,g4,thresholdk,note;
+var n=0,polytope=1,busarray1,harmonic,fund,mix,a,b,cc,immersion,busarray,gate,threshold;
+var xp,yp,zp,kx,ky,kz,vx,vy,vz,formants,c12,c22,env,paner;
+
+///inputs
+level=2.pow(gain.lag2(~lagtime)/16256);
+///level=gain;
+c=2.pow(fundamental.lag2(~lagtime)/16256);
+res=2.pow(resonanse.lag2(~lagtime)/16256);
+revroom=2.pow(room.lag2(~lagtime)/16256);
+overdrive=2.pow(drive.lag2(~lagtime)/16256);
+
+harmonic=harm;
+trange=mag.lag2(~lagtime);
+level=level;
+
+note=2.pow(key.lag2(~lagtime)/12);
+
+env=EnvGen.ar(Env.perc(0.01,8,1),gate:Trig1.kr(Changed.kr(key), 0.01));
+level=level;
+
+
+///pitch
+fund=c*tune;
+pitch=exp(Complex(0,1)*tone);
+pitchx=2.pow(Select.kr((pitch.real*~note).abs,Select.kr(scselect,~scale))/12);
+pitchy=2.pow(Select.kr((pitch.imag*~note).abs,Select.kr(scselect,~scale))/12);
+
+n=0;
+
+polytope.do{
+
+azn=az.[n].lag2(~lagtime);
+eln=el.[n].lag2(~lagtime);
+
+///spat
+//verb
+xp = ((harmonic*cos(eln)*cos(azn))+(cos(harmonic*(eln))*cos(harmonic*(azn))))/harmonic.sqrt;
+yp = ((harmonic*cos(eln)*sin(azn))+(cos(harmonic*(eln))*sin(harmonic*(azn))))/harmonic.sqrt;
+zp = ((harmonic*sin(eln))+(sin(harmonic*(eln))))/harmonic.sqrt;
+///tone
+kx=((Complex(cos(azn*harmonic),cos(azn*harmonic)).rho/(1.sqrt))*(Complex(cos(eln),cos(eln)).rho/(1.sqrt)));
+ky=((Complex(sin(azn*harmonic),sin(azn*harmonic)).rho/(1.sqrt))*(Complex(cos(eln),cos(eln)).rho/(1.sqrt)));
+kz=(Complex(sin(eln*harmonic),sin(eln*harmonic))).rho/(1.sqrt);
+//pan
+x =(cos(eln)*cos(azn));
+y =(cos(eln)*sin(azn));
+z =(sin(eln));
+
+//////perspective
+immersion = (level/dist) / ((level/dist) + z + ((level/dist)/2));
+////temperament
+tx = (trange*kx);
+ty = (trange*ky);
+tz = (trange*kz);
+tonex=2.pow(tx.round(1)/~temperament);
+toney=2.pow(ty.round(1)/~temperament);
+tonez=2.pow(tz.round(1)/~temperament);
+
+////osc data
+freqx=(fund*pitchx)*tonex*note;
+freqy=(fund*pitchy)*toney*note;
+freqz=fund*tonez*note;
+ampx=c.reciprocal*tonex.reciprocal*level*note.reciprocal;
+ampy=c.reciprocal*toney.reciprocal*level*note.reciprocal;
+ampz=c.reciprocal*tonez.reciprocal*level*note.reciprocal;
+//phase set
+//phasex=(Complex(1,x).theta*2);
+//phasey=(Complex(1,y).theta*2);
+//phasez=(Complex(1,z).theta*2);
+//phasex=atan2(x,y);
+//phasey=atan2(y,z);
+//phasez=atan2(z,x);
+phasex=(x*2pi);
+phasey=(y*2pi);
+phasez=(z*2pi);
+
+
+/////////osc
+c1=BPF.ar((Osc.ar(~wt.bufnum,freqx,phase:phasex,mul:~complevel).abs*
+SinOsc.ar(freqx,phase:phasex)),freqx,res,ampx*x.sign*1)*(env+0);
+c2=BPF.ar((Osc.ar(~wt.bufnum,freqy,phase:phasey,mul:~complevel).abs*
+SinOsc.ar(freqy,phase:phasey)),freqy,res,ampy*y.sign*1)*(env+0);
+c3=BPF.ar((Osc.ar(~wt.bufnum,freqz,phase:phasez,mul:~complevel).abs*
+SinOsc.ar(freqz,phase:phasez)),freqz,res,ampz*z.sign)*(env+0);
+
+c12=BPF.ar((Osc.ar(~wt.bufnum,(fund)*2,phase:phasex,mul:~complevel).abs*
+SinOsc.ar((fund)*2,phase:phasex)),(fund)*2,res,ampx*x.sign/2)*l1;
+c22=BPF.ar((Osc.ar(~wt.bufnum,(fund)/2,phase:phasey,mul:~complevel).abs*
+SinOsc.ar((fund)/2,phase:phasey)),(fund)/2,res,ampy*y.sign*2)*l2;
+
+c1=c1+c12; c2=c2+c22;
+///distortion
+mix=overdrive.linlin(1,2.pow(~fuselim/16256),2.pow(~fuselim/16256),1);
+
+c1=c1.lag2(~signalSize.reciprocal)*
+(LPF.ar(Saw.ar(tune,(ampx)),tune*64*mix).fold2(mix*~distortion)+((ampx)));
+c2=c2.lag2(~signalSize.reciprocal)*
+(LPF.ar(Saw.ar(tune,(ampy)),tune*64*mix).fold2(mix*~distortion)+((ampy)));
+c3=c3.lag2(~signalSize.reciprocal)*
+(LPF.ar(Saw.ar(tune,(ampz)),tune*64*mix).fold2(mix*~distortion)+((ampz)));
+
+///rev
+sigx=FreeVerb.ar((c1).fold2(overdrive*~comp),xp.lag2(0.1).fold2(1).abs,revroom);
+sigy=FreeVerb.ar((c2).fold2(overdrive*~comp),yp.lag2(0.1).fold2(1).abs,revroom);
+sigz=FreeVerb.ar((c3).fold2(overdrive*~comp),zp.lag2(0.1).fold2(1).abs,revroom);
+
+//vbap panner
+/*(
+g1=((cos(eln)*cos(azn)*cos(~azimuth.[0])*cos(~azimuth.[0]))
++
+(cos(eln)*sin(azn)* cos(~elevation.[0])*sin(~azimuth.[0]))
++
+(sin(eln)*sin(~elevation.[0])));
+
+g2=((cos(eln)*cos(azn)*cos(~elevation.[1])*cos(~azimuth.[1]))
++
+(cos(eln)*sin(azn)*cos(~elevation.[1])*sin(~azimuth.[1]))
++
+(sin(eln)*sin(~elevation.[1])));
+
+g3=((cos(eln)*cos(azn)*cos(~elevation.[2])*cos(~azimuth.[2]))
++
+(cos(eln)*sin(azn)*cos(~elevation.[2])*sin(~azimuth.[2]))
++
+(sin(eln)*sin(~elevation.[2])));
+
+g4=((cos(eln)*cos(azn)*cos(~elevation.[3])*cos(~azimuth.[3]))
++
+(cos(eln)*sin(azn)*cos(~elevation.[3])*sin(~azimuth.[3]))
++
+(sin(eln)*sin(~elevation.[3])));
+);*/
+
+///sig
+a=HPF.ar((LeakDC.ar((sigx)*((sigz).fold2(overdrive*~distortion)+(0)))),64);
+b=HPF.ar((LeakDC.ar((sigy)*((sigz).fold2(overdrive*~distortion)+(0)))),64);
+//cc=HPF.ar((LeakDC.ar((sigz)*((sigz).fold2(overdrive*~distortion)+(ampz)))),64);
+
+threshold=(((343/0.15)/tune).reciprocal.ampdb/2.sqrt).dbamp;
+a=Compander.ar(sigx,sigz,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
+b=Compander.ar(sigy,sigz,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
+//cc=Compander.ar(sigz,sigz,threshold,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.000001);
+
+//formants
+//aeiou	//freq,bandwidth,amp
+/*formants=[
+[[800,0.8,0.dbamp],[1150,0.9,4.neg.dbamp],[2800,1.2,20.neg.dbamp]],
+[[400,0.6,0.dbamp],[1600,0.8,24.neg.dbamp],[2700,1.2,30.neg.dbamp]],
+[[350,0.5,0.dbamp],[1700,1,20.neg.dbamp],[2700,1.2,30.neg.dbamp]],
+[[450,0.7,0.dbamp],[800,0.8,9.neg.dbamp],[2830,1,16.neg.dbamp]],
+[[325,0.5,0.dbamp],[700,0.6,12.neg.dbamp],[2530,1.7,30.neg.dbamp]],
+];
+
+vx=BPF.ar(a,Select.kr(v,formants).[0].[0],Select.kr(v,formants).[0].[1]*voice,Select.kr(v,formants).[0].[2])*(level/voice.sqrt);
+vy=BPF.ar(b,Select.kr(v,formants).[1].[0],Select.kr(v,formants).[1].[1]*voice,Select.kr(v,formants).[1].[2])*(level/voice.sqrt);
+vz=BPF.ar(cc,Select.kr(v,formants).[2].[0],Select.kr(v,formants).[2].[1]*voice,Select.kr(v,formants).[2].[2])*(level/voice.sqrt);
+
+a=vx;
+b=vy;
+cc=vz;*/
+
+///wavefield out wavefield presenst in record, audio format headphones or mono
+//use z for mono out
+//busarray1=[0,1,2,3,4,5,6,7];
+busarray1=[0,2,4,6,8,10,12,14];
+busarray2=[1,3,5,7,9,11,13,15];
+Out.ar(busarray1.[n],a.softclip(3));
+Out.ar(busarray2.[n],b.softclip(3));
+//Out.ar(4,cc.softclip(3));
+
+//vbap out
+/*(
+Out.ar(0,a.softclip(3)*g1);
+Out.ar(1,a.softclip(3)*g2);
+Out.ar(2,a.softclip(3)*g3);
+Out.ar(3,a.softclip(3)*g4);
+Out.ar(0,b.softclip(3)*g1);
+Out.ar(1,b.softclip(3)*g2);
+Out.ar(2,b.softclip(3)*g3);
+Out.ar(3,b.softclip(3)*g4);
+);*/
+
+//pan stereo out, wavefield mixed, if recorded on stereo stereo ouput acoustics present, if mono out record, audio format stereo speakers
+//field
+//paner=Cartesian(x,y,z);
+//Out.ar(0,Pan2.ar(a.softclip(3),(paner.theta.linlin(pi.neg,pi,1.neg,1).wrap(0,1))));
+//Out.ar(0,Pan2.ar(b.softclip(3),(paner.theta.linlin(pi.neg,pi,1.neg,1).wrap(0,1.neg))));
+//Out.ar(0,Pan2.ar(cc.softclip(3),(paner.phi.linlin(0.5pi.neg,0.5pi,1.neg,1))));
+
+//quad out
+//Out.ar(0,Pan4.ar(a.softclip(3),(x.wrap2(1))*immersion,(y.wrap2(1))*immersion));
+//Out.ar(0,Pan4.ar(b.softclip(3),(x.wrap2(1))*immersion,(y.wrap2(1))*immersion));
+
+//mono out
+//Out.ar(0,a.softclip(2));
+//Out.ar(0,b.softclip(2));
+//Out.ar(0,a.softclip(2));
+//Out.ar(0,b.softclip(2));
+//Out.ar(0,cc.softclip(2));
+
+n=n+1;
+};
+}).add;
+);
+		4.wait;
 ///data
 (
 ~time=1;
@@ -434,7 +646,7 @@ Routine({loop{
 {
 Routine({loop{
 ~sn=~mel.next;
-(1/3).wait
+(1/4).wait
 }
 }).play;
 }.defer
@@ -452,7 +664,7 @@ Routine({loop{
 ///patterns
 (
 (~pattern1 = Pdef(\1,
-Pmono( \synth,
+Pmono( \synthr,
 \dur,Pfunc{~frames*2},
 \gain,Pfunc{~gain},
 \fundamental,Pfunc{~fundamental},
