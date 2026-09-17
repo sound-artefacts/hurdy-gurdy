@@ -19,10 +19,10 @@ s.recChannels = 4;
 {
 var w, x, y, z, p,ch1,ch2,ch3,ch4;
 
-ch1=SoundIn.ar(0);
-	ch2=FreeVerb.ar(SoundIn.ar(1),0.2);
-	ch3=FreeVerb.ar(SoundIn.ar(0),0.5);
-	ch4=FreeVerb.ar(SoundIn.ar(1),0.4);
+ch1=FreeVerb.ar(SoundIn.ar(0),0.1,0.2);
+ch2=FreeVerb.ar(SoundIn.ar(1),0.2,0.2);
+ch3=FreeVerb.ar(SoundIn.ar(0),0.25,0.2);
+ch4=FreeVerb.ar(SoundIn.ar(1),0.3,0.2);
 
 w=1*(ch1+ch2+ch3+ch4)*2.sqrt;
 x=1*(ch1-ch2-ch3+ch4)*2.sqrt;
