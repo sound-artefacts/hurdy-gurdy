@@ -22,7 +22,6 @@ ch1=FreeVerb.ar(SoundIn.ar(0),0.3,0.1);
 ch2=FreeVerb.ar(SoundIn.ar(1),0.2,0.1);
 ch3=FreeVerb.ar(SoundIn.ar(0),0.15,0.1);
 ch4=FreeVerb.ar(SoundIn.ar(1),0.2,0.1);
-ch1=FreeVerb.ar(SoundIn.ar(0),0.3,0.1);
 
 
 w=0.1*(ch1+ch2+ch3+ch4)*2.sqrt;
